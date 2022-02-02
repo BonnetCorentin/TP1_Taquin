@@ -7,4 +7,13 @@ L'interface graphique du projet Taquin a été effectué grâce à la libraire J
 
 Plusieurs fonctionnalités ont été implémentées :
 
-  - Déplacement en fonction du chemin le plus court sans communication entre les agents. Avec cette fonctionnalités 
+  - Déplacement en fonction du chemin le plus court sans communication entre les agents. Avec cette fonctionnalité le système est bloquant, en effet si un agent se trouve sur la
+  route de l'agent qui se déplace alors l'agent se retrouvera bloqué.
+   - La deuxième résout le problème de bloquage du système. En effet les agents peuvent communiquer entre eux. Si un agent se trouve sur le passage d'un autre agent, alors il va 
+   se pousser pour laisser passer l'agent de base.
+   
+Améliorations possibles :
+  
+  Plusieurs améliotations sont possibles pour le système. En effet il est possible de faire communiquer de manière plus efficace les agents entre eux. Ainsi les agents peuvent
+  se coordonner dans le but de se créer des chemins sans se rentrer dedans et ainsi créer des effets "d'aller-retour".
+  

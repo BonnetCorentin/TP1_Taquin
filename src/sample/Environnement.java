@@ -10,13 +10,14 @@ import java.util.stream.Collectors;
 public class Environnement {
     private final Object[][] map;
     private final Object[][] mapFinale;
-    private final ArrayList<Agent> agents = new ArrayList<>();
     private List<Character> alphabet = "abcdefghijklmnopqrstuvwxyz".chars()
             .mapToObj(e -> (char) e).collect(Collectors.toList());
-    private Boolean isOver = false;
 
 
     public Environnement(int x, int y, int nbAgent) {
+
+        final ArrayList<Agent> agents = new ArrayList<>();
+
         map = new Object[x][y];
         mapFinale = new Object[x][y];
 
@@ -40,6 +41,7 @@ public class Environnement {
             int indexLettre = rand.nextInt(alphabet.size());
 
             Agent agent = new Agent(alphabet.get(indexLettre), this);
+            agent.setCoordinates(new int[]{xAgent, yAgent});
             agents.add(agent);
 
             map[xAgent][yAgent] = agent;
@@ -59,41 +61,25 @@ public class Environnement {
             } while (mapFinale[xAgent][yAgent] instanceof Agent);
 
             mapFinale[xAgent][yAgent] = agents.get(i);
+            agents.get(i).setFinalesCoordinates(new int[]{xAgent, yAgent});
 
         }
 
         System.out.println(agents);
-        startThread();
+        System.out.println(this);
 
-    }
-
-//    public void start() {
-//        new Thread(this).start();
-//        startThread();
-//    }
-
-    private void startThread() {
         for (Agent agent : agents) {
             Thread thread = new Thread(agent);
             thread.start();
         }
-    }
-//
-//    @Override
-//    public void run() {
-//        while (keepGoing()) {
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException ex) {
-//
-//            }
-//
-//        }
-//    }
 
-    public Boolean keepGoing() {
-        return this.isOver;
     }
+
+
+    public boolean isFinished() {
+        return map == mapFinale;
+    }
+
 
     public Object[][] getMap() {
         return map;
@@ -103,50 +89,23 @@ public class Environnement {
         return mapFinale;
     }
 
-    private int[] getCoordinatesAgent(Agent a, Object[][] map) {
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map[i].length; j++) {
-                if (map[i][j] == a) {
-                    return new int[]{i, j};
-                }
-            }
-
-        }
-        return new int[]{-1, -1};
-    }
-
-    private synchronized Boolean moveAgent(Agent a, int[] newCoordinates) throws InterruptedException {
-        int[] coordinates = getCoordinatesAgent(a, map);
-
-        if (!(map[newCoordinates[0]][newCoordinates[1]] instanceof Agent)) {
-            map[coordinates[0]][coordinates[1]] = '.';
-            map[newCoordinates[0]][newCoordinates[1]] = a;
-            System.out.println(this);
-            return true;
-        } else {
+    public synchronized boolean moveAgent(Agent a, int[] newCoordinates) {
+        if (newCoordinates[0] >= map.length || newCoordinates[1] >= map[0].length || newCoordinates[0] < 0 || newCoordinates[1] < 0) {
             return false;
         }
 
+        if (!(map[newCoordinates[0]][newCoordinates[1]] instanceof Agent)) {
+            map[a.getCoordinatesAgent()[0]][a.getCoordinatesAgent()[1]] = '.';
+            map[newCoordinates[0]][newCoordinates[1]] = a;
 
-    }
+            a.setCoordinates(new int[]{newCoordinates[0], newCoordinates[1]});
 
-
-    public void bestMove(Agent a) throws InterruptedException {
-        int[] finalesCoordinates = getCoordinatesAgent(a, mapFinale);
-        int[] coordinates = getCoordinatesAgent(a, map);
-
-        int dX = coordinates[0] - finalesCoordinates[0];
-        int dY = coordinates[1] - finalesCoordinates[1];
-
-        if (dX < 0) {
-            moveAgent(a, new int[]{coordinates[0] + 1, coordinates[1]});
-        } else if (dX > 0) {
-            moveAgent(a, new int[]{coordinates[0] - 1, coordinates[1]});
-        } else if (dY < 0) {
-            moveAgent(a, new int[]{coordinates[0], coordinates[1] + 1});
-        } else if (dY > 0) {
-            moveAgent(a, new int[]{coordinates[0], coordinates[1] - 1});
+        } else {
+            System.out.println("here");
+            ((Agent) map[newCoordinates[0]][newCoordinates[1]]).push();
         }
+        System.out.println(this);
+        return true;
     }
 
 
@@ -161,14 +120,14 @@ public class Environnement {
             toString.append('\n');
         }
 
-        toString.append("Map Finale :\n");
+        /*toString.append("Map Finale :\n");
 
         for (Object[] objects : mapFinale) {
             for (Object object : objects) {
                 toString.append(object);
             }
             toString.append('\n');
-        }
+        }*/
 
         return toString.toString();
     }

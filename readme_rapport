@@ -1,0 +1,10 @@
+Projet SMA TP Taquin : 
+BONNET Corentin
+MANQ Quentin
+
+
+L'interface graphique du projet Taquin a été effectué grâce à la libraire JavaFX.
+
+Plusieurs fonctionnalités ont été implémentées :
+
+  - Déplacement en fonction du chemin le plus court sans communication entre les agents. Avec cette fonctionnalités 
